@@ -89,9 +89,6 @@ int main(void)
 	}
 	printf("\n");
 
-	//int centroids10[N-1][N][2] = {{	{0, 5},{30,10},{0,0}	},
-	//						  {	{10,10},{20,20},{30,30}	}};
-
 	// Perform Classification, Recomputation of Centroids and WCSS computation for k centroids, where 2 <= k <= N
 	for (k = 2; k < N+1; k++)
 	{
