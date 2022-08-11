@@ -1,9 +1,8 @@
-/*
- * find_new_centroids.s
- *
- *  Created on: 2021/8/26
- *      Author: Gu Jing
- */
+@ EE2028 Assignment 1, Sem 1, AY 2021/22
+@ (c) ECE NUS, 2021
+@ Josiah Chua A0238950X
+@ Teoh Jing Yang A0164524H
+
    .syntax unified
 	.cpu cortex-m4
 	.fpu softvfp
@@ -14,13 +13,7 @@
 @ Start of executable code
 .section .text
 
-@ EE2028 Assignment 1, Sem 1, AY 2021/22
-@ (c) ECE NUS, 2021
-
-@ Josiah Chua A0238950X
-@ Teoh Jing Yang A0164524H
-
-@ You could create a look-up table of registers here:
+@ Look-up table of registers:
 @R0: pointer j for points10, initialised at j = 0
 @R1: Address 0 of centroids10
 @R2: Address 0 of class
@@ -35,7 +28,6 @@
 @R11: N
 @R12: Number of points M, that counts down to 0
 
-@ write your program from here:
 find_new_centroids:
 	PUSH {R1-R12,R14}
 	@ create a duplicate of R3 to point at new centroid first address

@@ -2,7 +2,7 @@
  ******************************************************************************
  * @project        : EE2028 Assignment 1 Program Template
  * @file           : main.c
- * @author         : Gu Jing, ECE, NUS
+ * @author         : Josiah Chua, ECE, NUS
  * @brief          : Main program body
  ******************************************************************************
  * @attention
@@ -28,7 +28,7 @@
 // Necessary function to enable printf() using semihosting
 extern void initialise_monitor_handles(void);
 
-// Functions to be written in
+// Functions for KMeans Clustering
 extern void classification(int* arg1, int* arg2, int* arg3, int* arg4);
 extern void find_new_centroids(int* arg1, int* arg2, int* arg3, int* arg4);
 extern int elbow(int* arg1, int* arg2, int* arg3);
@@ -57,8 +57,6 @@ int main(void)
 	    }
 		printf("\n");
 
-	//double points[M][2] = { {0.0, 0.0}, {0.0, 1.0},{1.0, 1.0},{1.0, 0.0},
-	//{3.0, 0.0}, {3.0, 1.0},{4.0, 0.0}, {4.0, 1.0} };
 
 	int i,j,k;
 	int temp1, temp2, temp3, temp4;
@@ -66,35 +64,28 @@ int main(void)
 	int wcss100[N-1];
 	int optimal;
 
-	// Multiply the coordinates by 10 so that the final answers have 1 decimal point
-	//	for (i=0; i<M; i++)
-	//		for (j=0; j<2; j++)
-	//			points10[i][j] = points[i][j]*10;
-
-	// initialise new_centroids10 array so that
-	//first entry of each coordinate array is (M,k), where k is amt of class.
-	// Zero-padded.
-
 	int new_centroids10[N-1][N+1][2];
 	int centroids10[N][2];
 
 	for (i = 2; i < N + 1; i++)
 	{
-	new_centroids10[i-2][0][0] = M;
-	new_centroids10[i-2][0][1] = i;
-	for (j = 1; j < N + 1; j ++)
-	{
-		new_centroids10[i-2][j][0] = 0;
-		new_centroids10[i-2][j][1] = 0;
-	}
+		new_centroids10[i-2][0][0] = M;
+		new_centroids10[i-2][0][1] = i;
+		for (j = 1; j < N + 1; j ++)
+		{
+			new_centroids10[i-2][j][0] = 0;
+			new_centroids10[i-2][j][1] = 0;
+		}
 	}
 
 	//goal is to generate centroids10 randomly
 	for (j = 0; j < N; j ++)
 	{
-	for(int c=0; c<2; c++) {
-		centroids10[j][c] = (int) 10*(( (double)rand() * ( 4.0 - 0.0 ) ) / (double)RAND_MAX + 0.0);}
-	printf("centroids10[%d] = (%d,%d) \n",j,centroids10[j][0],centroids10[j][1]);
+		for(int c=0; c<2; c++) 
+		{
+			centroids10[j][c] = (int) 10*(( (double)rand() * ( 4.0 - 0.0 ) ) / (double)RAND_MAX + 0.0);
+		}
+		printf("centroids10[%d] = (%d,%d) \n",j,centroids10[j][0],centroids10[j][1]);
 	}
 	printf("\n");
 
@@ -109,7 +100,10 @@ int main(void)
 		classification((int*)points10, (int*)centroids10, (int*)class, (int*)new_centroids10[k-2]);
 		printf("Class for each point: \n");
 		for (i=0; i<M; i++)
+		{
 			printf("point %d: class %d \n", i, class[i]);
+		}
+			
 	printf("\n");
 
 	// Re-computation of centroids

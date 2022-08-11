@@ -1,9 +1,8 @@
-/*
- * optimalCluster.s
- *
- *  Created on: 2021/8/26
- *      Author: Teoh Jing Yang
- */
+@ EE2028 Assignment 1, Sem 1, AY 2021/22
+@ (c) ECE NUS, 2021
+@ Josiah Chua A0238950X
+@ Teoh Jing Yang A0164524H
+
    .syntax unified
 	.cpu cortex-m4
 	.fpu softvfp
@@ -14,13 +13,7 @@
 @ Start of executable code
 .section .text
 
-@ EE2028 Assignment 1, Sem 1, AY 2021/22
-@ (c) ECE NUS, 2021
-
-@ Josiah Chua A0238950X
-@ Teoh Jing Yang A0164524H
-
-@ You could create a look-up table of registers here:
+@ Look-up table of registers:
 @ R0: threshold value
 @ R1: first address of wcss
 @ R2: N - 1 - 2 computations needed. This is decremented til 0
@@ -30,47 +23,93 @@
 @ R6: value of wcss[i+2]
 @ R7: candidate for the optimal value
 
-
-@ write your program from here:
 optimalCluster:
-	PUSH {R1-R12,R14} @saves register values and link back to main()
-	MOV R7, #2 @updates R7 with the first candidate for the answer
-	CMP R2, #2 @edge case: N = 2
+
+	@saves register values and link back to main()
+	PUSH {R1-R12,R14}
+
+	@updates R7 with the first candidate for the answer
+	MOV R7, #2 
+
+	@edge case: N = 2
+	CMP R2, #2
 	BEQ Escape
 
-	SUBS R2, #3 @initialise R2 to the countdown counter
+	@initialise R2 to the countdown counter
+	SUBS R2, #3 
 	BEQ EdgeCase3
-	MOV R3, R1 @updates R3 with address of wcss[0]
 
+	@updates R3 with address of wcss[0]
+	MOV R3, R1
 
 GradientLoop:
-	LDR R4, [R3], #4 @R4 = wcss[i], i++
-	LDR R5, [R3], #4 @R5 = wcss[i+1], i++
-	LDR R6, [R3], #-4 @R6 = wcss[i+2], i--, now i is at the next value
-	SUB R4, R5 @R4 = wcss[i] - wcss[i+1]
-	SUB R5, R6 @R5 = wcss [i+1] - wcss[i+2]
+	@R4 = wcss[i], i++
+	LDR R4, [R3], #4
+
+	@R5 = wcss[i+1], i++
+	LDR R5, [R3], #4
+
+	@R6 = wcss[i+2], i--, now i is at the next value
+	LDR R6, [R3], #-4
+
+	@R4 = wcss[i] - wcss[i+1]
+	SUB R4, R5
+
+	@R5 = wcss [i+1] - wcss[i+2]
+	SUB R5, R6
 	CMP R4,R5
-	ITE PL @check if there is an increase or decrease in gradient
-	SUBPL R4, R5 @R4 = wcss[i] - 2*wcss[i+1] + wcss[i+2] if decrease
-	SUBMI R4, R5, R4 @R4 = - (wcss[i] - 2*wcss[i+1] + wcss[i+2]) if increase
-	CMP R4, R0 @check if R4 is less than threshold
-	BMI Escape @escape and complete program if less than threshold. Otherwise, continue.
-	ADD R7, #1 @else, look at next best solution
-	SUBS R2, #1 @decrement counter by 1.
+
+	@check if there is an increase or decrease in gradient
+	ITE PL
+
+	@R4 = wcss[i] - 2*wcss[i+1] + wcss[i+2] if decrease
+	SUBPL R4, R5
+
+	@R4 = - (wcss[i] - 2*wcss[i+1] + wcss[i+2]) if increase
+	SUBMI R4, R5, R4
+
+	@check if R4 is less than threshold
+	CMP R4, R0
+
+	@escape and complete program if less than threshold. Otherwise, continue.
+	BMI Escape
+
+	@ else, look at next best solution
+	ADD R7, #1
+
+	@decrement counter by 1.
+	SUBS R2, #1 
+
 	ITT EQ
-	ADDEQ R7, #1 @ no elbow point. Hence, best point is the last point
-	BEQ Escape @if counter is 0, escape. We achieve best solution
-	B GradientLoop @otherwise, perform the gradient computation again
+	@ no elbow point. Hence, best point is the last point
+	ADDEQ R7, #1
+
+	@ if counter is 0, escape. We achieve best solution
+	BEQ Escape
+
+	@ otherwise, perform the gradient computation again
+	B GradientLoop
 
 EdgeCase3:
-	LDR R4, [R3], #4 @R4 = wcss[i], i++
-	LDR R5, [R3] @R5 = wcss[i+1]
-	SUBS R4, R5 @R4 = wcss[i] - wcss[i+1]
+	@R4 = wcss[i], i++
+	LDR R4, [R3], #4
+
+	@R5 = wcss[i+1]
+	LDR R5, [R3]
+
+	@R4 = wcss[i] - wcss[i+1]
+	SUBS R4, R5
+
 	ITE EQ
-	MOVEQ R7, #2 @zero gradient
-	MOVNE R7, #3 @choose last point
+	@zero gradient
+	MOVEQ R7, #2
+
+	@choose last point
+	MOVNE R7, #3
 
 Escape:
-	MOV R0, R7 @update R0 to the solution
+
+	@update R0 to the solution
+	MOV R0, R7
 	POP {R1-R12,R14}
 	BX LR
