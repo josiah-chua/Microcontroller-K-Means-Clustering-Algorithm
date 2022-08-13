@@ -9,6 +9,7 @@ In the main.c file, some parameters that can be changed are:
 
 The algorithm will then generate the starting positions of the centroids randomly and run the KMeans Clustering Algorithm
 
+## Project Report
 Program Logic:
 classification.s
 ![image](https://user-images.githubusercontent.com/81459293/184146267-12e206a6-df99-4c14-b5ab-f6281bc90254.png)
